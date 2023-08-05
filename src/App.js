@@ -10,6 +10,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
+import { Predictions } from 'aws-amplify';
 
 function App() {
   let [value, setValue] = React.useState('');
@@ -28,6 +29,31 @@ function App() {
       duration: 9000,
       isClosable: true,
     });
+    Predictions.convert({
+      textToSpeech: {
+        source: {
+          text: value,
+        },
+        voiceId: 'Russell', // default configured on aws-exports.js
+        // list of different options are here https://docs.aws.amazon.com/polly/latest/dg/voicelist.html
+      },
+    })
+      .then(result => {
+        let AudioContext = window.AudioContext || window.webkitAudioContext;
+        console.log({ AudioContext });
+        const audioCtx = new AudioContext();
+        const source = audioCtx.createBufferSource();
+        audioCtx.decodeAudioData(
+          result.audioStream,
+          buffer => {
+            source.buffer = buffer;
+            source.connect(audioCtx.destination);
+            source.start(0);
+          },
+          err => console.log({ err })
+        );
+      })
+      .catch(err => console.log({ err }));
   };
 
   return (
