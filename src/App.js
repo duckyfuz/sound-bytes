@@ -29,7 +29,6 @@ function App() {
   let [activeCategory, setActiveCategory] = React.useState('singapore');
   let [selectedNews, setSelectedNews] = React.useState([]);
 
-  let [value, setValue] = React.useState();
   let [speakerDict, setSpeakerDict] = React.useState({});
   let [audio, setAudio] = React.useState();
 
