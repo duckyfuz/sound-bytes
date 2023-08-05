@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   ChakraProvider,
   Box,
+  HStack,
   VStack,
   Grid,
   theme,
@@ -10,11 +11,18 @@ import {
   useToast,
   Link,
   Text,
+  Checkbox,
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { Predictions } from 'aws-amplify';
+import { fetchNews } from './helper/news';
+import { generateScript } from './helper/openAI';
 
 function App() {
+  let [newsObject, setNewsObject] = React.useState({});
+  let [activeCategory, setActiveCategory] = React.useState('singapore');
+  let [selectedNews, setSelectedNews] = React.useState([]);
+
   let [value, setValue] = React.useState();
   let [soundByte, setSoundByte] = React.useState();
   let [speakerDict, setSpeakerDict] = React.useState({});
@@ -25,10 +33,17 @@ function App() {
     setValue(inputValue);
   };
 
+  useEffect(() => {
+    (async () => {
+      const tempNewsObject = await fetchNews();
+      setNewsObject(tempNewsObject);
+    })();
+  }, []);
+
   const toast = useToast();
 
-  const createHandler = () => {
-    const tempValue = [
+  const createHandler = async () => {
+    let tempValue = [
       "Emma: Welcome back to Daily Chatter, your go-to podcast for the latest news stories. I'm your host, Emma, and joining me today is my co-host, William.",
       "William: Thanks, Emma. I'm excited to discuss today's news with you. Let's jump right in.",
       "Emma: Absolutely. Our first story is about George Goh, the founder of Harvey Norman Ossia, who has submitted his application for a certificate of eligibility to contest the upcoming Presidential Election in Singapore. He mentioned that he is a 'serious candidate' and pointed out that his group of five companies has a combined shareholders' equity of over S$1.5 billion in the past three years.",
@@ -45,6 +60,11 @@ function App() {
       'William: That wraps up our news stories for today. Thank you, Emma, for discussing these topics with me.',
       "Emma: Thank you, William. It was a pleasure as always. And thank you to all our listeners for tuning in to Daily Chatter. We'll be back tomorrow with more news stories. Stay informed and have a great day!",
     ];
+
+    const script = await generateScript(selectedNews);
+    tempValue = script.split('\n');
+    tempValue = tempValue.filter(str => str !== '');
+    console.log(tempValue);
 
     const processTextToSpeech = async (text, speaker, i) => {
       try {
@@ -97,6 +117,50 @@ function App() {
         <Grid minH="100vh" p={3}>
           <ColorModeSwitcher justifySelf="flex-end" />
           <VStack spacing={8}>
+            {newsObject !== {} && (
+              <VStack spacing={4}>
+                <HStack>
+                  {[
+                    'singapore',
+                    'business',
+                    'entertainment',
+                    'general',
+                    'health',
+                    'science',
+                    'sports',
+                    'technology',
+                  ].map(category => (
+                    <Button
+                      onClick={() => {
+                        setActiveCategory(category);
+                      }}
+                      key={category}
+                      colorScheme={
+                        activeCategory === category ? 'teal' : 'gray'
+                      }
+                    >
+                      {category}
+                    </Button>
+                  ))}
+                </HStack>
+                <VStack>
+                  {newsObject[activeCategory]?.map(news => (
+                    <Checkbox
+                      key={news.publishedAt}
+                      onChange={() => {
+                        setSelectedNews([...selectedNews, news]);
+                      }}
+                    >
+                      <HStack>
+                        <Text fontSize="sm">
+                          {news.author} | {news.title}
+                        </Text>
+                      </HStack>
+                    </Checkbox>
+                  ))}
+                </VStack>
+              </VStack>
+            )}
             <Textarea
               width={(window.innerWidth * 2) / 3}
               value={value}
