@@ -1,0 +1,26 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-soundbytes-staging-50602-authRole",
+      "UnauthRoleArn": "arn:aws:iam::650617877251:role/amplify-soundbytes-staging-50602-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::650617877251:role/amplify-soundbytes-staging-50602-authRole",
+      "Region": "ap-southeast-1",
+      "DeploymentBucketName": "amplify-soundbytes-staging-50602-deployment",
+      "UnauthRoleName": "amplify-soundbytes-staging-50602-unauthRole",
+      "StackName": "amplify-soundbytes-staging-50602",
+      "StackId": "arn:aws:cloudformation:ap-southeast-1:650617877251:stack/amplify-soundbytes-staging-50602/c696bd10-334d-11ee-b35c-06aafe2dddb6",
+      "AmplifyAppId": "d2b9bh1d03pzp1"
+    },
+    "categories": {
+      "auth": {
+        "soundbytesc8671b03": {}
+      },
+      "predictions": {
+        "soundByte": {}
+      },
+      "api": {
+        "soundbytes": {}
+      }
+    }
+  }
+}

@@ -5,6 +5,16 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import * as serviceWorker from './serviceWorker';
 
+import { Amplify } from 'aws-amplify';
+import {
+  Predictions,
+  AmazonAIPredictionsProvider,
+} from '@aws-amplify/predictions';
+import awsconfig from './aws-exports';
+
+Amplify.configure(awsconfig);
+Predictions.addPluggable(new AmazonAIPredictionsProvider());
+
 const container = document.getElementById('root');
 const root = ReactDOM.createRoot(container);
 
