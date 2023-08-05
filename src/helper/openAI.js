@@ -1,4 +1,4 @@
-import sampleNews from './sampleNews.json';
+// import sampleNews from './sampleNews.json';
 const { Configuration, OpenAIApi } = require('openai');
 
 export const generateScript = async selectedNews => {
@@ -25,7 +25,7 @@ export const generateScript = async selectedNews => {
     model: 'text-davinci-003',
     prompt,
     temperature: 0.6,
-    max_tokens: 500,
+    max_tokens: 1000,
   });
   const result = response.data.choices[0].text;
 

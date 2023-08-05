@@ -2,6 +2,7 @@ const fetchSingapore = async () => {
   const newsObject = await fetch(
     `https://newsapi.org/v2/top-headlines?country=sg&apiKey=${process.env.REACT_APP_NEWS_API_KEY}`
   ).then(res => res.json());
+  console.log(newsObject);
   return newsObject.articles;
 };
 
@@ -31,6 +32,8 @@ export const fetchNews = async () => {
     const categoryNews = await fetchCategory(category);
     newsObject[`${category}`] = categoryNews;
   });
+
+  console.log(newsObject);
 
   return newsObject;
 };
