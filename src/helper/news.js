@@ -1,36 +1,36 @@
 const fetchSingapore = async () => {
-  const newsObject = fetch(
+  const newsObject = await fetch(
     `https://newsapi.org/v2/top-headlines?country=sg&apiKey=${process.env.REACT_APP_NEWS_API_KEY}`
-  ).then((res) => res.json());
-  return { singapore: newsObject.articles };
+  ).then(res => res.json());
+  return newsObject.articles;
 };
 
-const fetchCategory = async (category) => {
-  const newsObject = fetch(
+const fetchCategory = async category => {
+  const newsObject = await fetch(
     `https://newsapi.org/v2/top-headlines?category=${category}&apiKey=${process.env.REACT_APP_NEWS_API_KEY}`
-  ).then((res) => res.json());
-  return { category: newsObject.articles };
+  ).then(res => res.json());
+  return newsObject.articles;
 };
 
 export const fetchNews = async () => {
   const categories = [
-    "business",
-    "entertainment",
-    "general",
-    "health",
-    "science",
-    "sports",
-    "technology",
+    'business',
+    'entertainment',
+    'general',
+    'health',
+    'science',
+    'sports',
+    'technology',
   ];
-  const news = [];
+  const newsObject = {};
 
   const categorySingapore = await fetchSingapore();
-  news.push(categorySingapore);
+  newsObject['singapore'] = categorySingapore;
 
-  categories.forEach(async (category) => {
+  categories.forEach(async category => {
     const categoryNews = await fetchCategory(category);
-    news.push(categoryNews);
+    newsObject[`${category}`] = categoryNews;
   });
 
-  console.log(news);
+  return newsObject;
 };
