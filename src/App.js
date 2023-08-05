@@ -8,13 +8,24 @@ import {
   Button,
   Link,
   Checkbox,
+  Tabs,
+  Tab,
+  TabPanels,
+  TabPanel,
+  TabList,
+  TabIndicator,
+  Textarea,
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { Predictions } from 'aws-amplify';
 import { fetchNews } from './helper/news';
 import { generateScript } from './helper/openAI';
 
+// add feature convert own article
+
 function App() {
+  let [status, setStatus] = React.useState('news');
+
   let [newsObject, setNewsObject] = React.useState({});
   let [activeCategory, setActiveCategory] = React.useState('singapore');
   let [selectedNews, setSelectedNews] = React.useState([]);
@@ -31,6 +42,11 @@ function App() {
       setNewsObject(tempNewsObject);
     })();
     setLoading(false);
+    // (async function () {
+    //   fetch('/')
+    //     .then(res => res.text())
+    //     .then(html => console.log(html));
+    // })();
   }, []);
 
   const createHandler = async () => {
@@ -81,9 +97,16 @@ function App() {
     });
   };
 
+  let [custom, setCustom] = React.useState('');
+
+  let handleInputChange = e => {
+    let inputValue = e.target.value;
+    setCustom(inputValue);
+  };
+
   return (
     <ChakraProvider theme={theme}>
-      <Grid minH="50vh" gap={1}>
+      <Grid gap={1}>
         <ColorModeSwitcher justifySelf="flex-end" />
 
         <VStack spacing={8}>
@@ -115,44 +138,78 @@ function App() {
           {/* <Text>{audio && audio}</Text> */}
           {/* <Text>{value && value}</Text> */}
 
-          {newsObject !== {} && (
-            <VStack spacing={4}>
-              <HStack>
-                {[
-                  'singapore',
-                  'business',
-                  'entertainment',
-                  'general',
-                  'health',
-                  'science',
-                  'sports',
-                  'technology',
-                ].map(category => (
-                  <Button
-                    onClick={() => {
-                      setActiveCategory(category);
-                    }}
-                    key={category}
-                    colorScheme={activeCategory === category ? 'teal' : 'gray'}
-                  >
-                    {category}
-                  </Button>
-                ))}
-              </HStack>
-              <VStack>
-                {newsObject[activeCategory]?.map(news => (
-                  <Checkbox
-                    key={news.publishedAt}
-                    onChange={() => {
-                      setSelectedNews([...selectedNews, news]);
-                    }}
-                  >
-                    {news.author} | {news.title}
-                  </Checkbox>
-                ))}
-              </VStack>
-            </VStack>
-          )}
+          <Tabs
+            isFitted
+            align="center"
+            size="lg"
+            variant="enclosed"
+            colorScheme="teal"
+            width={900}
+          >
+            <TabList>
+              <Tab>News API</Tab>
+              <Tab>Custom Article</Tab>
+            </TabList>
+            {/* <TabIndicator
+              mt="-1.5px"
+              height="2px"
+              bg="teal"
+              borderRadius="1px"
+            /> */}
+            <TabPanels>
+              <TabPanel>
+                {newsObject !== {} && (
+                  <VStack spacing={4}>
+                    <HStack>
+                      {[
+                        'singapore',
+                        'business',
+                        'entertainment',
+                        'general',
+                        'health',
+                        'science',
+                        'sports',
+                        'technology',
+                      ].map(category => (
+                        <Button
+                          onClick={() => {
+                            setActiveCategory(category);
+                          }}
+                          key={category}
+                          colorScheme={
+                            activeCategory === category ? 'teal' : 'gray'
+                          }
+                        >
+                          {category}
+                        </Button>
+                      ))}
+                    </HStack>
+                    <VStack>
+                      {newsObject[activeCategory]?.map(news => (
+                        <Checkbox
+                          key={news.publishedAt}
+                          onChange={() => {
+                            setSelectedNews([...selectedNews, news]);
+                          }}
+                        >
+                          {news.author} | {news.title}
+                        </Checkbox>
+                      ))}
+                    </VStack>
+                  </VStack>
+                )}
+              </TabPanel>
+              <TabPanel>
+                <Textarea
+                  value={custom}
+                  onChange={handleInputChange}
+                  placeholder="Input your article here!"
+                  size="lg"
+                  h={500}
+                />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </VStack>
       </Grid>
     </ChakraProvider>
