@@ -13,7 +13,6 @@ import {
   TabPanels,
   TabPanel,
   TabList,
-  TabIndicator,
   Textarea,
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
@@ -50,26 +49,6 @@ function App() {
   }, []);
 
   const createHandler = async () => {
-    setLoading(true);
-    if (tabIndex === 0) {
-      const script = await generateScript(selectedNews);
-      let value = script.split('\n');
-      value = value.filter(str => str !== '');
-      value = value.map(el => {
-        return el.replace('Emma:', '').replace('William:', '');
-      });
-      setValue(value);
-    } else {
-      const script = await generateCustom(custom);
-      console.log(script);
-      let value = script.split('\n');
-      value = value.filter(str => str !== '');
-      value = value.map(el => {
-        return el.replace('Emma:', '').replace('William:', '');
-      });
-      setValue(value);
-    }
-
     const processTextToSpeech = async (text, speaker, i) => {
       try {
         const result = await Predictions.convert({
@@ -86,20 +65,46 @@ function App() {
         console.log(err);
       }
     };
-    for (let i = 0; i < value.length; i++) {
-      let speaker = i % 2 === 0 ? 'Amy' : 'Russell';
-      await processTextToSpeech(value[i], speaker, i);
+
+    setLoading(true);
+    
+    if (tabIndex === 0) {
+      console.log('Generating from NEWS');
+      const script = await generateScript(selectedNews);
+      let value = script.split('\n');
+      value = value.filter(str => str !== '');
+      value = value.map(el => {
+        return el.replace('Emma:', '').replace('William:', '');
+      });
+      for (let i = 0; i < value.length; i++) {
+        let speaker = i % 2 === 0 ? 'Amy' : 'Russell';
+        await processTextToSpeech(value[i], speaker, i);
+      }
+      setLoading(false);
+    } else {
+      console.log('Generating from CUSTOM');
+      const script = await generateCustom(custom);
+      console.log(script);
+      let value = script.split('\n');
+      value = value.filter(str => str !== '');
+      value = value.map(el => {
+        return el.replace('Emma:', '').replace('William:', '');
+      });
+      for (let i = 0; i < value.length; i++) {
+        let speaker = i % 2 === 0 ? 'Amy' : 'Russell';
+        await processTextToSpeech(value[i], speaker, i);
+      }
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const combineHandler = () => {
-    console.log(speakerDict);
+    // console.log(speakerDict);
     let speakerArray = [];
     for (let i = 0; i < Object.keys(speakerDict).length; i++) {
       speakerArray.push(speakerDict[i]);
     }
-    console.log(speakerArray);
+    // console.log(speakerArray);
     let uris = speakerArray,
       proms = uris.map(uri => fetch(uri).then(r => r.blob()));
     Promise.all(proms).then(blobs => {
@@ -200,7 +205,7 @@ function App() {
                     <VStack>
                       {newsObject[activeCategory]?.map(news => (
                         <Checkbox
-                          key={news.publishedAt}
+                          key={news.title}
                           onChange={() => {
                             setSelectedNews([...selectedNews, news]);
                           }}
@@ -216,7 +221,7 @@ function App() {
                 <Textarea
                   value={custom}
                   onChange={handleInputChange}
-                  placeholder="Input your article here!"
+                  placeholder="Start writing!"
                   size="lg"
                   h={500}
                 />
