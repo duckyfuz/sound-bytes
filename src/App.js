@@ -19,12 +19,12 @@ import {
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { Predictions } from 'aws-amplify';
 import { fetchNews } from './helper/news';
-import { generateScript } from './helper/openAI';
+import { generateCustom, generateScript } from './helper/openAI';
 
 // add feature convert own article
 
 function App() {
-  let [status, setStatus] = React.useState('news');
+  const [tabIndex, setTabIndex] = React.useState(0);
 
   let [newsObject, setNewsObject] = React.useState({});
   let [activeCategory, setActiveCategory] = React.useState('singapore');
@@ -51,13 +51,25 @@ function App() {
 
   const createHandler = async () => {
     setLoading(true);
-    const script = await generateScript(selectedNews);
-    let value = script.split('\n');
-    value = value.filter(str => str !== '');
-    value = value.map(el => {
-      return el.replace('Emma:', '').replace('William:', '');
-    });
-    setValue(value);
+    if (tabIndex === 0) {
+      const script = await generateScript(selectedNews);
+      let value = script.split('\n');
+      value = value.filter(str => str !== '');
+      value = value.map(el => {
+        return el.replace('Emma:', '').replace('William:', '');
+      });
+      setValue(value);
+    } else {
+      const script = await generateCustom(custom);
+      console.log(script);
+      let value = script.split('\n');
+      value = value.filter(str => str !== '');
+      value = value.map(el => {
+        return el.replace('Emma:', '').replace('William:', '');
+      });
+      setValue(value);
+    }
+
     const processTextToSpeech = async (text, speaker, i) => {
       try {
         const result = await Predictions.convert({
@@ -145,6 +157,7 @@ function App() {
             variant="enclosed"
             colorScheme="teal"
             width={900}
+            onChange={index => setTabIndex(index)}
           >
             <TabList>
               <Tab>News API</Tab>
