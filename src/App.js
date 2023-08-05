@@ -35,6 +35,7 @@ function App() {
           text: value,
         },
         voiceId: 'Russell', // default configured on aws-exports.js
+        // Hello Ernest
         // list of different options are here https://docs.aws.amazon.com/polly/latest/dg/voicelist.html
       },
     })
