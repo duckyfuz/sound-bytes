@@ -51,8 +51,8 @@ function App() {
         const result = await Predictions.convert({
           textToSpeech: {
             source: { text },
-            voiceId: speaker,
           },
+          voiceId: speaker,
         });
 
         // Update the state with the new URL
@@ -84,10 +84,10 @@ function App() {
       let blob = new Blob(blobs),
         blobUrl = URL.createObjectURL(blob),
         audio = new Audio(blobUrl);
-      console.log(blobUrl);
-      console.log(audio);
+      // console.log(blobUrl);
+      // console.log(audio);
       setAudio(blobUrl);
-      audio.play();
+      // audio.play();
     });
   };
 
