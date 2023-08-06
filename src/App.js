@@ -14,13 +14,14 @@ import {
   TabPanel,
   TabList,
   Textarea,
+  Input,
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { Predictions } from 'aws-amplify';
 import { fetchNews } from './helper/news';
 import { generateCustom, generateScript } from './helper/openAI';
 
-// add feature convert own article
+import { articleDict, soundByteArticle } from './helper/textURLs';
 
 function App() {
   const [tabIndex, setTabIndex] = React.useState(0);
@@ -41,7 +42,9 @@ function App() {
     })();
     setLoading(false);
     // (async function () {
-    //   fetch('/')
+    //   fetch(
+    //     'https://www.straitstimes.com/singapore/at-least-8-new-nursing-homes-in-singapore-in-next-5-years'
+    //   )
     //     .then(res => res.text())
     //     .then(html => console.log(html));
     // })();
@@ -80,7 +83,7 @@ function App() {
         await processTextToSpeech(value[i], speaker, i);
       }
       setLoading(false);
-    } else {
+    } else if (tabIndex === 1) {
       console.log('Generating from CUSTOM');
       const script = await generateCustom(custom);
       console.log(script);
@@ -90,7 +93,21 @@ function App() {
         return el.replace('Emma:', '').replace('William:', '');
       });
       for (let i = 0; i < value.length; i++) {
-        let speaker = i % 2 === 0 ? 'Amy' : 'Russell';
+        let speaker = i % 2 === 0 ? 'Ivy' : 'Justin';
+        await processTextToSpeech(value[i], speaker, i);
+      }
+      setLoading(false);
+    } else {
+      console.log('Generating from EXTERNAL URL');
+      const script = await generateCustom(articleDict[customURL]);
+      console.log(script);
+      let value = script.split('\n');
+      value = value.filter(str => str !== '');
+      value = value.map(el => {
+        return el.replace('Emma:', '').replace('William:', '');
+      });
+      for (let i = 0; i < value.length; i++) {
+        let speaker = i % 2 === 0 ? 'Ivy' : 'Justin';
         await processTextToSpeech(value[i], speaker, i);
       }
       setLoading(false);
@@ -114,10 +131,16 @@ function App() {
   };
 
   let [custom, setCustom] = React.useState('');
+  let [customURL, setCustomURL] = React.useState('');
 
   let handleInputChange = e => {
     let inputValue = e.target.value;
     setCustom(inputValue);
+  };
+
+  let handleInputURLChange = e => {
+    let inputValue = e.target.value;
+    setCustomURL(inputValue);
   };
 
   return (
@@ -166,6 +189,7 @@ function App() {
             <TabList>
               <Tab>News API</Tab>
               <Tab>Custom Article</Tab>
+              <Tab>External URL</Tab>
             </TabList>
             {/* <TabIndicator
               mt="-1.5px"
@@ -224,6 +248,41 @@ function App() {
                   size="lg"
                   h={500}
                 />
+                <Button
+                  colorScheme="teal"
+                  size="sm"
+                  onClick={() => {
+                    setCustom(soundByteArticle);
+                  }}
+                >
+                  soundByte Article
+                </Button>
+              </TabPanel>
+              <TabPanel>
+                <VStack gap={3}>
+                  <Input
+                    placeholder="Enter your site!"
+                    size="lg"
+                    value={customURL}
+                    onChange={handleInputURLChange}
+                  />
+                  <Button
+                    colorScheme="teal"
+                    size="sm"
+                    onClick={() => {
+                      const siteArray = [
+                        'https://www.straitstimes.com/singapore/health/ai-already-playing-bigger-roles-behind-the-scenes-in-healthcare-kenneth-mak',
+                        'https://www.straitstimes.com/singapore/not-a-ninja-turtle-image-of-motorcyclist-with-stingray-strapped-to-his-back-goes-viral?dicbo=v2-RAmORfA',
+                        'https://www.straitstimes.com/singapore/politics/mr-tharman-was-the-policymaker-i-was-the-moneymaker-presidential-hopeful-ng-kok-song',
+                      ];
+                      setCustomURL(
+                        siteArray[Math.floor(Math.random() * siteArray.length)]
+                      );
+                    }}
+                  >
+                    I'm Feeling Lucky
+                  </Button>
+                </VStack>
               </TabPanel>
             </TabPanels>
           </Tabs>
