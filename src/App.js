@@ -23,7 +23,7 @@ import { Predictions } from 'aws-amplify';
 import { fetchNews } from './helper/news';
 import { generateCustom, generateScript } from './helper/openAI';
 
-import { articleDict, soundByteArticle } from './helper/textURLs';
+import { articleDict, cloudArticle, soundByteArticle } from './helper/textURLs';
 
 function App() {
   const [tabIndex, setTabIndex] = React.useState(0);
@@ -44,7 +44,7 @@ function App() {
     let inputValue = e.target.value;
     setFemSpeaker(inputValue);
   };
-  
+
   let handleMaleChange = e => {
     let inputValue = e.target.value;
     setMaleSpeaker(inputValue);
@@ -284,15 +284,27 @@ function App() {
                     size="lg"
                     h={500}
                   />
+                  <HStack>
+
                   <Button
                     colorScheme="teal"
                     size="sm"
                     onClick={() => {
                       setCustom(soundByteArticle);
                     }}
-                  >
+                    >
                     soundByte Article
                   </Button>
+                  <Button
+                    colorScheme="teal"
+                    size="sm"
+                    onClick={() => {
+                      setCustom(cloudArticle);
+                    }}
+                    >
+                    cloudHacks Article
+                  </Button>
+                    </HStack>
                 </VStack>
               </TabPanel>
               <TabPanel>

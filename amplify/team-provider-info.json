@@ -20,6 +20,12 @@
       },
       "api": {
         "soundbytes": {}
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d2b9bh1d03pzp1",
+          "type": "cicd"
+        }
       }
     }
   }
