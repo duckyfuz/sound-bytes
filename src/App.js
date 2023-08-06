@@ -66,7 +66,7 @@ function App() {
     };
 
     setLoading(true);
-    
+
     if (tabIndex === 0) {
       console.log('Generating from NEWS');
       const script = await generateScript(selectedNews);
@@ -76,7 +76,7 @@ function App() {
         return el.replace('Emma:', '').replace('William:', '');
       });
       for (let i = 0; i < value.length; i++) {
-        let speaker = i % 2 === 0 ? 'Amy' : 'Russell';
+        let speaker = i % 2 === 0 ? 'Ivy' : 'Justin';
         await processTextToSpeech(value[i], speaker, i);
       }
       setLoading(false);
