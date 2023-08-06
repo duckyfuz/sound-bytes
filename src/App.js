@@ -243,22 +243,24 @@ function App() {
                 )}
               </TabPanel>
               <TabPanel>
-                <Textarea
-                  value={custom}
-                  onChange={handleInputChange}
-                  placeholder="Start writing!"
-                  size="lg"
-                  h={500}
-                />
-                <Button
-                  colorScheme="teal"
-                  size="sm"
-                  onClick={() => {
-                    setCustom(soundByteArticle);
-                  }}
-                >
-                  soundByte Article
-                </Button>
+                <VStack gap={3}>
+                  <Textarea
+                    value={custom}
+                    onChange={handleInputChange}
+                    placeholder="Start writing!"
+                    size="lg"
+                    h={500}
+                  />
+                  <Button
+                    colorScheme="teal"
+                    size="sm"
+                    onClick={() => {
+                      setCustom(soundByteArticle);
+                    }}
+                  >
+                    soundByte Article
+                  </Button>
+                </VStack>
               </TabPanel>
               <TabPanel>
                 <VStack gap={3}>
