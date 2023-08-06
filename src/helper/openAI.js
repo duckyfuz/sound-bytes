@@ -9,7 +9,7 @@ export const generateScript = async selectedNews => {
   for (let i = 0; i < selectedNews.length; i++) {
     newsString += `Author: ${selectedNews[i]['author']} \n Title: ${selectedNews[i]['title']} \n Content: ${selectedNews[i]['content']} \n`;
   }
-  const prompt = `Generate a script for a podcast named soundByte discussing the daily news between Emma, and her co-host, William.
+  const prompt = `Generate a script for a podcast named soundByte discussing the daily news between Ammy, and her co-host, Russell.
     Emma should be the first one to speak.
     Keep it lighthearted. 
     Besides the information provided, you can supplement with your own knowledge. 
