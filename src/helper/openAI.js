@@ -54,7 +54,7 @@ export const generateCustom = async article => {
   // }
   const prompt = `Generate a script for a podcast named soundByte discussing the article between Emma, and her co-host, William.
     Emma should be the first one to speak.
-    Keep it lighthearted. 
+    Keep it lighthearted. Make it sound like a natural conversation between friends.
     Besides the information provided, you can supplement with your own knowledge. 
     The relevant article is as follows:\n${article}`;
   console.log(prompt);

@@ -15,6 +15,7 @@ import {
   TabList,
   Textarea,
   Input,
+  Text,
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { Predictions } from 'aws-amplify';
@@ -67,7 +68,6 @@ function App() {
         console.log(err);
       }
     };
-
     setLoading(true);
 
     if (tabIndex === 0) {
@@ -225,7 +225,7 @@ function App() {
                         </Button>
                       ))}
                     </HStack>
-                    <VStack>
+                    <VStack align={'flex-start'}>
                       {newsObject[activeCategory]?.map(news => (
                         <Checkbox
                           key={news.title}
@@ -233,7 +233,9 @@ function App() {
                             setSelectedNews([...selectedNews, news]);
                           }}
                         >
-                          {news.author} | {news.title}
+                          <Text noOfLines={1} align={'left'}>
+                            {news.author} | {news.title}
+                          </Text>
                         </Checkbox>
                       ))}
                     </VStack>
