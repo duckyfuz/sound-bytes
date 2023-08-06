@@ -16,6 +16,7 @@ import {
   Textarea,
   Input,
   Text,
+  Select,
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 import { Predictions } from 'aws-amplify';
@@ -36,19 +37,25 @@ function App() {
 
   let [loading, setLoading] = React.useState(true);
 
+  let [femSpeaker, setFemSpeaker] = React.useState('Kendra');
+  let [maleSpeaker, setMaleSpeaker] = React.useState('Matthew');
+
+  let handleFemChange = e => {
+    let inputValue = e.target.value;
+    setFemSpeaker(inputValue);
+  };
+  
+  let handleMaleChange = e => {
+    let inputValue = e.target.value;
+    setMaleSpeaker(inputValue);
+  };
+
   useEffect(() => {
     (async () => {
       const tempNewsObject = await fetchNews();
       setNewsObject(tempNewsObject);
     })();
     setLoading(false);
-    // (async function () {
-    //   fetch(
-    //     'https://www.straitstimes.com/singapore/at-least-8-new-nursing-homes-in-singapore-in-next-5-years'
-    //   )
-    //     .then(res => res.text())
-    //     .then(html => console.log(html));
-    // })();
   }, []);
 
   const createHandler = async () => {
@@ -72,42 +79,50 @@ function App() {
 
     if (tabIndex === 0) {
       console.log('Generating from NEWS');
-      const script = await generateScript(selectedNews);
+      const script = await generateScript(
+        selectedNews,
+        femSpeaker,
+        maleSpeaker
+      );
       let value = script.split('\n');
       value = value.filter(str => str !== '');
       value = value.map(el => {
-        return el.replace('Emma:', '').replace('William:', '');
+        return el.replace(`${femSpeaker}:`, '').replace(`${maleSpeaker}:`, '');
       });
       for (let i = 0; i < value.length; i++) {
-        let speaker = i % 2 === 0 ? 'Ivy' : 'Justin';
+        let speaker = i % 2 === 0 ? femSpeaker : maleSpeaker;
         await processTextToSpeech(value[i], speaker, i);
       }
       setLoading(false);
     } else if (tabIndex === 1) {
       console.log('Generating from CUSTOM');
-      const script = await generateCustom(custom);
+      const script = await generateCustom(custom, femSpeaker, maleSpeaker);
       console.log(script);
       let value = script.split('\n');
       value = value.filter(str => str !== '');
       value = value.map(el => {
-        return el.replace('Emma:', '').replace('William:', '');
+        return el.replace(`${femSpeaker}:`, '').replace(`${maleSpeaker}:`, '');
       });
       for (let i = 0; i < value.length; i++) {
-        let speaker = i % 2 === 0 ? 'Ivy' : 'Justin';
+        let speaker = i % 2 === 0 ? femSpeaker : maleSpeaker;
         await processTextToSpeech(value[i], speaker, i);
       }
       setLoading(false);
     } else {
       console.log('Generating from EXTERNAL URL');
-      const script = await generateCustom(articleDict[customURL]);
+      const script = await generateCustom(
+        articleDict[customURL],
+        femSpeaker,
+        maleSpeaker
+      );
       console.log(script);
       let value = script.split('\n');
       value = value.filter(str => str !== '');
       value = value.map(el => {
-        return el.replace('Emma:', '').replace('William:', '');
+        return el.replace(`${femSpeaker}:`, '').replace(`${maleSpeaker}:`, '');
       });
       for (let i = 0; i < value.length; i++) {
-        let speaker = i % 2 === 0 ? 'Ivy' : 'Justin';
+        let speaker = i % 2 === 0 ? femSpeaker : maleSpeaker;
         await processTextToSpeech(value[i], speaker, i);
       }
       setLoading(false);
@@ -147,8 +162,26 @@ function App() {
     <ChakraProvider theme={theme}>
       <Grid gap={1}>
         <ColorModeSwitcher justifySelf="flex-end" />
-
         <VStack spacing={8}>
+          <HStack gap={8}>
+            <Text fontSize="xl" as="b">
+              Select your hosts!
+            </Text>
+            <HStack>
+              <Select value={femSpeaker} onChange={handleFemChange} w={40}>
+                <option value="Ivy">Ivy</option>
+                <option value="Salli">Salli</option>
+                <option value="Kimberly">Kimberly</option>
+                <option value="Kendra">Kendra</option>
+                <option value="Joanna">Joanna</option>
+              </Select>
+              <Select value={maleSpeaker} onChange={handleMaleChange} w={40}>
+                <option value="Justin">Justin</option>
+                <option value="Matthew">Matthew</option>
+                <option value="Joey">Joey</option>
+              </Select>
+            </HStack>
+          </HStack>
           <HStack gap={6}>
             <Button
               colorScheme="teal"
